@@ -705,15 +705,15 @@ function renderTimeline() {
   });
 }
 
-function initMobileHeroCardToggle() {
+function initHeroFlipButtons() {
   const heroGrid = document.getElementById("heroGrid");
   if (!heroGrid) return;
 
   const mobileQuery = window.matchMedia(
-    "(hover: none) and (pointer: coarse), (max-width: 980px)",
+    "(max-width: 980px), (hover: none) and (pointer: coarse)",
   );
 
-  const closeAllCards = () => {
+  const closeAllMobileCards = () => {
     heroGrid.querySelectorAll(".hero-card.flipped").forEach((card) => {
       card.classList.remove("flipped");
       card.setAttribute("aria-expanded", "false");
@@ -722,36 +722,36 @@ function initMobileHeroCardToggle() {
 
   const syncWithViewport = () => {
     if (!mobileQuery.matches) {
-      closeAllCards();
+      closeAllMobileCards();
     }
+  };
+
+  const getCard = (target) => {
+    if (!target || typeof target.closest !== "function") return null;
+    return target.closest(".hero-card");
   };
 
   heroGrid.addEventListener("click", (event) => {
     if (!mobileQuery.matches) return;
 
-    const card = event.target.closest(".hero-card");
+    const button = event.target.closest(".hero-flip-btn");
+    if (!button) return;
+
+    const card = getCard(button);
     if (!card || !heroGrid.contains(card)) return;
 
     event.preventDefault();
+    event.stopPropagation();
 
-    const alreadyOpen = card.classList.contains("flipped");
-    closeAllCards();
+    const willOpen = !card.classList.contains("flipped");
+    closeAllMobileCards();
 
-    if (!alreadyOpen) {
+    if (willOpen) {
       card.classList.add("flipped");
       card.setAttribute("aria-expanded", "true");
     }
-  });
 
-  heroGrid.addEventListener("keydown", (event) => {
-    if (!mobileQuery.matches) return;
-    if (event.key !== "Enter" && event.key !== " ") return;
-
-    const card = event.target.closest(".hero-card");
-    if (!card || !heroGrid.contains(card)) return;
-
-    event.preventDefault();
-    card.click();
+    button.blur();
   });
 
   if (typeof mobileQuery.addEventListener === "function") {
@@ -762,6 +762,7 @@ function initMobileHeroCardToggle() {
 }
 
 function initControlsDropdown() {
+
   const dropdown = document.getElementById("controlsDropdown");
   if (!dropdown) return;
 
@@ -790,6 +791,9 @@ function initHeroCardToggle() {
     return mobileQuery.matches || coarseQuery.matches;
   }
 
+  // Keep the desktop hover/keyboard behavior only on non-touch layouts.
+  if (isTouchLayout()) return;
+
   function closeOtherCards(current) {
     heroGrid.querySelectorAll(".hero-card.is-flipped").forEach((card) => {
       if (card !== current) card.classList.remove("is-flipped");
@@ -798,7 +802,6 @@ function initHeroCardToggle() {
 
   function bindCard(card) {
     card.addEventListener("click", (event) => {
-      if (!isTouchLayout()) return;
       if (event.target.closest("a,button,input")) return;
       const shouldFlip = !card.classList.contains("is-flipped");
       closeOtherCards(card);
@@ -806,7 +809,6 @@ function initHeroCardToggle() {
     });
 
     card.addEventListener("keydown", (event) => {
-      if (!isTouchLayout()) return;
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       const shouldFlip = !card.classList.contains("is-flipped");
@@ -821,9 +823,6 @@ function initHeroCardToggle() {
         card.dataset.bound = "true";
         bindCard(card);
       }
-      if (!isTouchLayout()) {
-        card.classList.remove("is-flipped");
-      }
     });
   }
 
@@ -831,15 +830,10 @@ function initHeroCardToggle() {
 
   const observer = new MutationObserver(refreshBindings);
   observer.observe(heroGrid, { childList: true });
-
-  if (typeof mobileQuery.addEventListener === "function") {
-    mobileQuery.addEventListener("change", refreshBindings);
-  } else if (typeof mobileQuery.addListener === "function") {
-    mobileQuery.addListener(refreshBindings);
-  }
 }
 
 function renderHeroes() {
+
   const heroGrid = document.getElementById("heroGrid");
   const universeChips = document.getElementById("universeChips");
   const searchInput = document.getElementById("searchInput");
@@ -874,8 +868,8 @@ function renderHeroes() {
       const card = document.createElement("article");
       card.className = "hero-card";
       card.tabIndex = 0;
-      card.setAttribute("aria-label", `${hero.name} card. Tap to view details on mobile.`);
-      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `${hero.name} card.`);
+      card.setAttribute("role", "group");
       card.setAttribute("aria-expanded", "false");
 
       card.innerHTML = `
@@ -888,10 +882,24 @@ function renderHeroes() {
                 <div class="actor">${hero.actor}</div>
                 <div class="badge">${hero.group}</div>
               </div>
+              <button
+                type="button"
+                class="hero-flip-btn hero-flip-open"
+                aria-label="View details for ${hero.name}"
+              >
+                View details
+              </button>
             </div>
           </div>
 
           <div class="side flipback">
+            <button
+              type="button"
+              class="hero-flip-btn hero-flip-close"
+              aria-label="Return to portrait for ${hero.name}"
+            >
+              Back to portrait
+            </button>
             <h4>${hero.name}</h4>
             <p>${hero.role}</p>
             <div class="line"><strong>Actor</strong><span>${hero.actor}</span></div>
@@ -1185,4 +1193,4 @@ renderCountdown();
 initThemeToggle();
 initSidebarTools();
 initMusicToggle();
-initMobileHeroCardToggle();
+initHeroFlipButtons();
