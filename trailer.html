@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avengers: Doomsday | Trailer</title>
+    <meta
+      name="description"
+      content="Watch official Avengers: Doomsday trailers and teaser videos directly on the site."
+    />
+    <meta name="theme-color" content="#8b0000" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="page-trailer">
+    <div class="stars"></div>
+    <div class="portal one"></div>
+    <div class="portal two"></div>
+    <div class="portal three"></div>
+
+    <div class="layout">
+      <aside>
+        <div class="brand">
+          <img
+            class="brand-logo"
+            src="assets/logo.webp"
+            alt="Avengers Doomsday logo"
+          />
+          <div>
+            <h1>Avengers: Doomsday</h1>
+            <p>Interactive mission board</p>
+          </div>
+        </div>
+
+        <div class="jarvis" aria-live="polite">
+          <div class="dot"></div>
+          <strong>JARVIS</strong>
+          <span id="sectionLabel">Trailer</span>
+        </div>
+
+        <nav id="sidebarNav" aria-label="Page sections">
+          <a href="index.html"><span class="nav-dot"></span>Home</a>
+          <a href="facts.html"><span class="nav-dot"></span>Facts</a>
+          <a href="trailer.html" class="active"
+            ><span class="nav-dot"></span>Trailer</a
+          >
+          <a href="heroes.html"><span class="nav-dot"></span>Heroes</a>
+          <a href="timeline.html"><span class="nav-dot"></span>Timeline</a>
+          <a href="links.html"><span class="nav-dot"></span>Links</a>
+        </nav>
+
+        <details class="sidebar-tools" id="sidebarTools">
+          <summary>Theme &amp; music</summary>
+          <div class="sidebar-controls">
+            <button class="pill" id="themeToggle" type="button">
+            Theme toggle
+          </button>
+          <button class="pill" id="muteBtn" type="button">
+            <span class="led"></span>Theme music
+          </button>
+          </div>
+        </details>
+
+        <div class="sidebar-foot">
+          <p>
+            Built with contrast, alignment, repetition, and proximity in mind.
+          </p>
+        </div>
+      </aside>
+
+      <main>
+        <section id="trailers" class="section">
+          <div class="section-header">
+            <div>
+              <h2>Trailers you can watch on the site</h2>
+              <p>Select any teaser to load it directly in the player.</p>
+            </div>
+          </div>
+
+          <div class="player-shell">
+            <div class="player-frame">
+              <iframe
+                id="mainTrailerFrame"
+                title="Avengers Doomsday trailer player"
+                src=""
+                loading="lazy"
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                  web-share;
+                "
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div id="videoButtons" class="video-buttons"></div>
+          </div>
+
+          <div id="trailerCards" class="trailer-cards"></div>
+        </section>
+
+        <footer class="footer">
+          <div class="footer-grid">
+            <div class="footer-section">
+              <h3>Avengers: Doomsday Fan Hub</h3>
+              <p>
+                An interactive fan-made website created for educational
+                purposes, featuring countdowns, hero profiles, timelines,
+                trailers, and production information related to Marvel Studios'
+                upcoming film
+                <strong>Avengers: Doomsday</strong>.
+              </p>
+            </div>
+
+            <div class="footer-section">
+              <h3>Sources & Credits</h3>
+
+              <ul class="footer-links">
+                <li>
+                  <a
+                    href="https://www.marvel.com/movies/avengers-doomsday"
+                    target="_blank"
+                  >
+                    Marvel Studios Official Website
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    href="https://marvel-movies.fandom.com/wiki/Avengers:_Doomsday_rumors"
+                    target="_blank"
+                  >
+                    Marvel Movies Wiki (Rumors & Production Information)
+                  </a>
+                </li>
+
+                <li>
+                  <a href="https://www.youtube.com/@marvel" target="_blank">
+                    Marvel Entertainment YouTube Channel
+                  </a>
+                </li>
+
+                <li>
+                  Hero portraits belong to their respective copyright owners.
+                </li>
+              </ul>
+            </div>
+
+            <div class="footer-section">
+              <h3>Disclaimer</h3>
+
+              <p>
+                Marvel, Avengers, and all related characters, names, logos,
+                trailers, and promotional materials are trademarks and
+                copyrights of Marvel Studios, Marvel Entertainment, and The Walt
+                Disney Company.
+              </p>
+
+              <p>
+                This website was created solely for educational and
+                non-commercial purposes.
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="footer-bottom">
+            <p>&copy; 2026 Khobe Romeo. All Rights Reserved.</p>
+          </div>
+        </footer>
+      </main>
+    </div>
+<script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
