@@ -705,6 +705,62 @@ function renderTimeline() {
   });
 }
 
+function initMobileHeroCardToggle() {
+  const heroGrid = document.getElementById("heroGrid");
+  if (!heroGrid) return;
+
+  const mobileQuery = window.matchMedia(
+    "(hover: none) and (pointer: coarse), (max-width: 980px)",
+  );
+
+  const closeAllCards = () => {
+    heroGrid.querySelectorAll(".hero-card.flipped").forEach((card) => {
+      card.classList.remove("flipped");
+      card.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  const syncWithViewport = () => {
+    if (!mobileQuery.matches) {
+      closeAllCards();
+    }
+  };
+
+  heroGrid.addEventListener("click", (event) => {
+    if (!mobileQuery.matches) return;
+
+    const card = event.target.closest(".hero-card");
+    if (!card || !heroGrid.contains(card)) return;
+
+    event.preventDefault();
+
+    const alreadyOpen = card.classList.contains("flipped");
+    closeAllCards();
+
+    if (!alreadyOpen) {
+      card.classList.add("flipped");
+      card.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  heroGrid.addEventListener("keydown", (event) => {
+    if (!mobileQuery.matches) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    const card = event.target.closest(".hero-card");
+    if (!card || !heroGrid.contains(card)) return;
+
+    event.preventDefault();
+    card.click();
+  });
+
+  if (typeof mobileQuery.addEventListener === "function") {
+    mobileQuery.addEventListener("change", syncWithViewport);
+  } else if (typeof mobileQuery.addListener === "function") {
+    mobileQuery.addListener(syncWithViewport);
+  }
+}
+
 function initControlsDropdown() {
   const dropdown = document.getElementById("controlsDropdown");
   if (!dropdown) return;
@@ -723,6 +779,66 @@ function initControlsDropdown() {
   }
 }
 
+function initHeroCardToggle() {
+  const heroGrid = document.getElementById("heroGrid");
+  if (!heroGrid) return;
+
+  const mobileQuery = window.matchMedia("(max-width: 980px)");
+  const coarseQuery = window.matchMedia("(pointer: coarse)");
+
+  function isTouchLayout() {
+    return mobileQuery.matches || coarseQuery.matches;
+  }
+
+  function closeOtherCards(current) {
+    heroGrid.querySelectorAll(".hero-card.is-flipped").forEach((card) => {
+      if (card !== current) card.classList.remove("is-flipped");
+    });
+  }
+
+  function bindCard(card) {
+    card.addEventListener("click", (event) => {
+      if (!isTouchLayout()) return;
+      if (event.target.closest("a,button,input")) return;
+      const shouldFlip = !card.classList.contains("is-flipped");
+      closeOtherCards(card);
+      card.classList.toggle("is-flipped", shouldFlip);
+    });
+
+    card.addEventListener("keydown", (event) => {
+      if (!isTouchLayout()) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      const shouldFlip = !card.classList.contains("is-flipped");
+      closeOtherCards(card);
+      card.classList.toggle("is-flipped", shouldFlip);
+    });
+  }
+
+  function refreshBindings() {
+    heroGrid.querySelectorAll(".hero-card").forEach((card) => {
+      if (!card.dataset.bound) {
+        card.dataset.bound = "true";
+        bindCard(card);
+      }
+      if (!isTouchLayout()) {
+        card.classList.remove("is-flipped");
+      }
+    });
+  }
+
+  refreshBindings();
+
+  const observer = new MutationObserver(refreshBindings);
+  observer.observe(heroGrid, { childList: true });
+
+  if (typeof mobileQuery.addEventListener === "function") {
+    mobileQuery.addEventListener("change", refreshBindings);
+  } else if (typeof mobileQuery.addListener === "function") {
+    mobileQuery.addListener(refreshBindings);
+  }
+}
+
 function renderHeroes() {
   const heroGrid = document.getElementById("heroGrid");
   const universeChips = document.getElementById("universeChips");
@@ -730,43 +846,6 @@ function renderHeroes() {
   if (!heroGrid || !universeChips || !searchInput) return;
 
   let activeUniverse = "All";
-  const touchQuery = window.matchMedia(
-    "(hover: none), (pointer: coarse), (max-width: 980px)",
-  );
-
-  function setCardState(card, open) {
-    card.classList.toggle("is-flipped", open);
-    card.setAttribute("aria-expanded", String(open));
-  }
-
-  function closeAllCards(exceptCard = null) {
-    heroGrid.querySelectorAll(".hero-card.is-flipped").forEach((card) => {
-      if (card !== exceptCard) setCardState(card, false);
-    });
-  }
-
-  function bindCard(card) {
-    if (card.dataset.bound === "true") return;
-    card.dataset.bound = "true";
-
-    const toggleCard = () => {
-      const isOpen = card.classList.contains("is-flipped");
-      closeAllCards(card);
-      setCardState(card, !isOpen);
-    };
-
-    card.addEventListener("click", (event) => {
-      if (!touchQuery.matches) return;
-      if (event.target.closest("a,button,input,textarea,select,label")) return;
-      toggleCard();
-    });
-
-    card.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      toggleCard();
-    });
-  }
 
   function drawHeroes() {
     const query = searchInput.value.trim().toLowerCase();
@@ -823,7 +902,6 @@ function renderHeroes() {
         </div>
       `;
 
-      bindCard(card);
       heroGrid.appendChild(card);
     });
   }
@@ -839,7 +917,6 @@ function renderHeroes() {
 
     btn.addEventListener("click", () => {
       activeUniverse = universe;
-      closeAllCards();
       document
         .querySelectorAll(".chip")
         .forEach((chip) => chip.classList.remove("active"));
@@ -850,10 +927,7 @@ function renderHeroes() {
     universeChips.appendChild(btn);
   });
 
-  searchInput.addEventListener("input", () => {
-    closeAllCards();
-    drawHeroes();
-  });
+  searchInput.addEventListener("input", drawHeroes);
   drawHeroes();
 }
 
@@ -1111,3 +1185,4 @@ renderCountdown();
 initThemeToggle();
 initSidebarTools();
 initMusicToggle();
+initMobileHeroCardToggle();

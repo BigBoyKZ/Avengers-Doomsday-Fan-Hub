@@ -915,10 +915,6 @@ nav a.active .nav-dot {
   position: relative;
   perspective: 1500px;
   min-height: 650px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  user-select: none;
 }
 
 .hero-card .flip {
